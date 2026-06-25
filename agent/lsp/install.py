@@ -59,6 +59,9 @@ INSTALL_RECIPES: Dict[str, Dict[str, Any]] = {
         # (tsserver) to be importable from the same node_modules tree;
         # otherwise initialize() fails with "Could not find a valid
         # TypeScript installation".  Install them together.
+        # ponytail: TS 6.0.x reports false diagnostics on valid JSX;
+        # pin to ^7 once stable.  For now, users who hit false positives
+        # can `cd ~/.hermes/lsp && npm install typescript@7`.
         "extra_pkgs": ["typescript"],
     },
     "@vue/language-server": {
