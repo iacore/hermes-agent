@@ -116,10 +116,16 @@ class KagiWebSearchProvider(WebSearchProvider):
 
     # -- extract --------------------------------------------------------------
 
-    def extract(self, urls: List[str], **kwargs: Any) -> Any:
+    def extract(self, urls: List[str], **kwargs: Any) -> List[Dict[str, Any]]:
         api_key = _load_api_key()
         if not api_key:
-            return {"success": False, "error": "KAGI_API_KEY not found in env or ~/.hermes/.env"}
+            return [{
+                "url": urls[0] if urls else "",
+                "title": "",
+                "content": "",
+                "raw_content": "",
+                "error": "KAGI_API_KEY not found in env or ~/.hermes/.env",
+            }]
 
         if len(urls) > 10:
             urls = urls[:10]
@@ -155,9 +161,21 @@ class KagiWebSearchProvider(WebSearchProvider):
             else:
                 data = resp.json()
         except requests.Timeout:
-            return {"success": False, "error": "Kagi extract timed out (60s)"}
+            return [{
+                "url": urls[0] if urls else "",
+                "title": "",
+                "content": "",
+                "raw_content": "",
+                "error": "Kagi extract timed out (60s)",
+            }]
         except requests.RequestException as exc:
-            return {"success": False, "error": f"Kagi extract failed: {exc}"}
+            return [{
+                "url": urls[0] if urls else "",
+                "title": "",
+                "content": "",
+                "raw_content": "",
+                "error": f"Kagi extract failed: {exc}",
+            }]
 
         results = []
         for page in data.get("data", []):
